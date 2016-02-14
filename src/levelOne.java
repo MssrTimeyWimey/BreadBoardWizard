@@ -18,11 +18,15 @@ import javax.swing.border.EmptyBorder;
 import com.fazecast.jSerialComm.SerialPort;
 
 public class levelOne extends JFrame {
+	
+	private int screen = 0;
 
 	private JPanel contentPane;
-	private boolean taskCompleted = false;
 	private JButton button;
 	private Board board;
+	private JLabel label;
+	private JLabel lblfarOutIn;
+	private long lastTime;
 
 	/**
 	 * Launch the application.
@@ -53,8 +57,6 @@ public class levelOne extends JFrame {
 		output.write("one\n");
 		output.flush();
 		System.out.println("done writing");
-
-		//I am a motherfucking badass
 
 		//wait for a button response from the user
 		while(true) {
@@ -91,7 +93,12 @@ public class levelOne extends JFrame {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
+			if (System.currentTimeMillis() - lastTime > 100) {
+				lastTime = System.currentTimeMillis();
+				if (screen >= 5 && Math.random() < 0.1) {
+					board.makeEnemy();
+				}
+			}
 		}
 	}
 
@@ -107,54 +114,74 @@ public class levelOne extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		button = new JButton("CREATIVE PROGRESS BUTTON");
+		button = new JButton("Continue");
 		if(MainRunner.stagesUnlocked < 2){
 			button.setEnabled(false);
 		}
 		
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				contentPane.setVisible(false);
-				dispose();
-				map mapscreen = new map();
-				mapscreen.setVisible(true);
+				screen++;
+				switch (screen) {
+				case 1:
+					label.setVisible(false);
+					lblfarOutIn.setVisible(false);
+					board.setVisible(true);
+					break;
+				case 2:
+					lblfarOutIn.setText("<html>Oh no! Misfortune strikes again, for although you have restored the activator core of the WEAPON, its POWER SETTINGS, weak from years of disuse, refuse to show their true vitality. The castle needs your aid! You must take the power control knob and repair the broken circuits with it, and quickly! The BAD GUYS are nearing the gate, and without the weapon at full power, the walls that have held for centuries will surely fall.</html>");
+					label.setText("<html>To repair the power gauge, you will use the A0 port on the arduino. Again, you will be using four jumper wires, a connector cable, and the potentiometer. You've already fixed the button, so this should be a piece of cake! Again connect the A0 port to the breadboard and the connector cable. Then, connect the red and black wires to the power rails of the breadboard, and twist the lever all the way to the right for max firepower!</html>");
+					label.setVisible(true);
+					lblfarOutIn.setVisible(true);
+					board.setVisible(false);
+					break;
+				case 3:
+					label.setVisible(false);
+					lblfarOutIn.setVisible(false);
+					board.setVisible(true);
+					break;
+				case 4:
+					lblfarOutIn.setText("<html>Now that the WEAPON is fully functional, you are ready to take out the BAD GUYS. Inspire your comrades and lead them in the fight against the evil beyond the wall! By repairing the microphone for the castle's PA system you can rally your fellows, providing them with the bravery that exemplifies a legendary warrior. Nothing can inspire your brothers more than the amplified sound of a war cry. Let those vocal cords vibrate freely and fiercely!</html>");
+					label.setText("<html>The most important part... repair the PA system! Now that you've fixed both the button and the lever, I won't even need to tell you have to do this. It's the exact same process, except now we will be using the A1 port on the arduino instead of the A0 port. When ready, let the world hear your war cry!</html>");
+					label.setVisible(true);
+					lblfarOutIn.setVisible(true);
+					board.setVisible(false);
+					break;
+				case 5:
+					label.setVisible(false);
+					lblfarOutIn.setVisible(false);
+					board.setVisible(true);
+					break;
+				case 6:
+					break;
+				default:
+					break;
+				}
 			}
 		});
 		button.setFont(new Font("Gabriola", Font.PLAIN, 50));
 		button.setBackground(Color.LIGHT_GRAY);
-		button.setBounds(186, 754, 845, 96);
+		button.setBounds(16, 754, 1015, 96);
 		contentPane.add(button);
 		
-		JLabel label = new JLabel("INSTRUCTIONS");
+		board = new Board();
+		board.setBounds(115, 100, 800, 600);
+		board.setVisible(false);
+		contentPane.add(board);
+		
+		label = new JLabel("<html>To rewire the button, you will need the button sensor, the connector cable, and four jumper cables. In this challenge, you will be using port 13 of the Digital pin ports of the arduino. You will connect port 13 to the breadboard, and then connect that breadboard to the yellow wire of the connector cable. The other two jumper wires will be used to connect the power and the ground wires, connecting the red wire to the positive rail and the black wire to the blue channel. Press the button when ready!</html>");
 		label.setVerticalAlignment(SwingConstants.TOP);
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		label.setFont(new Font("Gabriola", Font.PLAIN, 27));
-		label.setBounds(15, 302, 1016, 98);
+		label.setBounds(15, 302, 1016, 270);
 		contentPane.add(label);
 		
-		JLabel lblfarOutIn = new JLabel("<html>Far out in the uncharted backwaters of the unfashionable end of the Western spiral arm of the realm lies a small unregarded yellow castle. Its magnificent buttresses stand tall and proud, its walls boasting six centuries of integrity. Now the BAD GUYS have descended once again from the north, and the castle's defenses have aged to a sorry state of dysfunction, turned soft from years of fighting only rain and wind. Now a new class of enemy stands at your doorstep, and you must restore the WEAPON's functionality. Use your knowledge of circuitry to repair the ACTIVATOR SWITCH and destroy the BAD GUYS knocking at your door!</html>");
+		lblfarOutIn = new JLabel("<html>Far out in the uncharted backwaters of the unfashionable end of the Western spiral arm of the realm lies a small unregarded yellow castle. Its magnificent buttresses stand tall and proud, its walls boasting six centuries of integrity. Now the BAD GUYS have descended once again from the north, and the castle's defenses have aged to a sorry state of dysfunction, turned soft from years of fighting only rain and wind. Now a new class of enemy stands at your doorstep, and you must restore the WEAPON's functionality. Use your knowledge of circuitry to repair the ACTIVATOR SWITCH and destroy the BAD GUYS knocking at your door!</html>");
 		lblfarOutIn.setVerticalAlignment(SwingConstants.TOP);
 		lblfarOutIn.setHorizontalAlignment(SwingConstants.CENTER);
 		lblfarOutIn.setFont(new Font("Gabriola", Font.PLAIN, 30));
 		lblfarOutIn.setBounds(15, 16, 1016, 270);
 		contentPane.add(lblfarOutIn);
-		
-		board = new Board();
-		board.setBounds(115, 400, 800, 300);
-		contentPane.add(board);
-		
-		JButton btnRestart = new JButton("RESTART");
-		btnRestart.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				contentPane.setVisible(false);
-				dispose();
-				main.main(null);
-			}
-		});
-		btnRestart.setFont(new Font("Gabriola", Font.PLAIN, 30));
-		btnRestart.setBackground(Color.LIGHT_GRAY);
-		btnRestart.setBounds(15, 754, 157, 96);
-		contentPane.add(btnRestart);
 		
 //		this.setVisible(true);
 		Thread thread = new Thread(){

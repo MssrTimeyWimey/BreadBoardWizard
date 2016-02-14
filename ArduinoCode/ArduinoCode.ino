@@ -8,7 +8,7 @@ int lastPotval = -1;
 
 int soundReading = 0;
 int soundDifference = 0;
-int soundThreshold = 600;
+int soundThreshold = 500;
 int soundStatus = 0;
 int lastSoundStatus = -1;
 

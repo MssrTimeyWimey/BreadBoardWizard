@@ -3,23 +3,31 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.concurrent.LinkedBlockingDeque;
 
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 public class Board extends JPanel implements Runnable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private final int projectileSpeed = 5;
-	private final int waveSpeed = 10;
+	private final int projectileSpeed = 20;
+	private final int waveSpeed = 40;
+	private final int enemySpeed = 10;
 	
 	double w;
 	double h;
+	
+	Image cannonImage;
+	Image bg;
 	
 	private double angle = 0;
 	
@@ -43,13 +51,29 @@ public class Board extends JPanel implements Runnable {
 		}
 	}
 	
-	private LinkedList<ProjectileInfo> projectiles = new LinkedList<>();
-	private LinkedList<WaveInfo> waves = new LinkedList<>();
+	private class EnemyInfo {
+		public double x;
+		public double y;
+		public EnemyInfo(double x, double y) {
+			this.x = x;
+			this.y = y;
+		}
+	}
+	
+	private LinkedBlockingDeque<ProjectileInfo> projectiles = new LinkedBlockingDeque<>();
+	private LinkedBlockingDeque<WaveInfo> waves = new LinkedBlockingDeque<>();
+	private LinkedBlockingDeque<EnemyInfo> enemies = new LinkedBlockingDeque<>();
 	
 	public Board() {
 		super(true);
 	    w = 800;
-	    h = 300;
+	    h = 600;
+	    
+	    ImageIcon ii = new ImageIcon("cannon.png");
+        cannonImage = ii.getImage();
+
+	    ii = new ImageIcon("bg.jpg");
+        bg = ii.getImage();
 	}
 
 	@Override
@@ -68,11 +92,15 @@ public class Board extends JPanel implements Runnable {
 	}
 	
 	public void shoot() {
-		projectiles.add(new ProjectileInfo((w/2), (h/2), getAngle()));
+		projectiles.add(new ProjectileInfo((w/2), ((h*3)/4), getAngle()));
 	}
 	
 	public void scream() {
 		waves.add(new WaveInfo(0));
+	}
+	
+	public void makeEnemy() {
+		enemies.add(new EnemyInfo(Math.random()*w, -50));
 	}
 
     private void drawDonut(Graphics g) {
@@ -87,16 +115,11 @@ public class Board extends JPanel implements Runnable {
                 RenderingHints.VALUE_RENDER_QUALITY);
 
         g2d.setRenderingHints(rh);
-
-        Ellipse2D e = new Ellipse2D.Double(-50, -100, 100, 200);
         
         Ellipse2D projShape = new Ellipse2D.Double(-25, -25, 50, 50);
         
-        AffineTransform at = AffineTransform.getTranslateInstance(w/2, h/2);
-		at.rotate(Math.toRadians(getAngle()));
-        g2d.setStroke(new BasicStroke(1));
-        g2d.setColor(Color.gray);
-		g2d.draw(at.createTransformedShape(e));
+        g2d.drawImage(bg, 0, 0, (int)w, (int)h, null);
+        
 
         for (ProjectileInfo projectile : projectiles) {
         	AffineTransform at2 = AffineTransform.getTranslateInstance(projectile.x, projectile.y);
@@ -107,12 +130,30 @@ public class Board extends JPanel implements Runnable {
         
         synchronized (waves) {
         	for (WaveInfo wave : waves) {
-        		Ellipse2D waveShape = new Ellipse2D.Double(w/2-wave.radius, h/2-wave.radius, wave.radius*2, wave.radius*2);
+        		Ellipse2D waveShape = new Ellipse2D.Double(w/2-wave.radius, (h*3)/4-wave.radius, wave.radius*2, wave.radius*2);
         		g2d.setStroke(new BasicStroke(1));
         		g2d.setColor(Color.blue);
         		g2d.draw(waveShape);
         	}
         }
+        
+        Rectangle2D enemyShape = new Rectangle2D.Double(-12, -12, 25, 25);
+        
+        for (EnemyInfo enemy : enemies) {
+        	AffineTransform at3 = AffineTransform.getTranslateInstance(enemy.x, enemy.y);
+        	g2d.setStroke(new BasicStroke(3));
+    		g2d.setColor(Color.pink);
+    		g2d.draw(at3.createTransformedShape(enemyShape));
+        }
+        
+        AffineTransform at = AffineTransform.getTranslateInstance(w/2-76, (h*3)/4-116);
+		at.rotate(Math.toRadians(getAngle()), 76, 116);
+        /*
+		g2d.setStroke(new BasicStroke(1));
+        g2d.setColor(Color.gray);
+		g2d.draw(at.createTransformedShape(e));
+        */
+        g2d.drawImage(cannonImage, at, null);
     }
     
     private void cycle() {
@@ -137,6 +178,25 @@ public class Board extends JPanel implements Runnable {
 	    		}
 	    	}
     	}
+        {
+        	Iterator<EnemyInfo> i = enemies.iterator();
+	    	while(i.hasNext()) {
+	    		EnemyInfo enemy = i.next();
+	    		enemy.y = enemy.y + enemySpeed;
+	    		if (enemy.y > h) {
+	    			i.remove();
+	    		} else {
+		    		for (ProjectileInfo proj : projectiles) {
+		    			double dx = enemy.x - proj.x;
+		    			double dy = enemy.y - proj.y;
+		    			double dist = Math.sqrt(dx*dx+dy*dy);
+		    			if (dist < 35) {
+		    				i.remove();
+		    			}
+		    		}
+	    		}
+	    	}
+        }
     }
 
     @Override
