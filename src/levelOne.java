@@ -22,6 +22,7 @@ public class levelOne extends JFrame {
 	private JPanel contentPane;
 	private boolean taskCompleted = false;
 	private JButton button;
+	private Board board;
 
 	/**
 	 * Launch the application.
@@ -54,9 +55,6 @@ public class levelOne extends JFrame {
 		System.out.println("done writing");
 
 		//I am a motherfucking badass
-		
-		System.out.println(MainRunner.arduinoPort.isOpen());
-		System.out.println(MainRunner.arduinoPort.getBaudRate());
 
 		//wait for a button response from the user
 		while(true) {
@@ -64,11 +62,12 @@ public class levelOne extends JFrame {
 				if (inputStream.available() > 0) {
 					int number = inputStream.read() - 48;
 					if(number > 0){
+						board.setAngle(board.getAngle()+1);
+						board.paintComponent(board.getGraphics());
 						MainRunner.stagesUnlocked++;
 						button.setEnabled(true);
-						//button.update(getGraphics());
 						System.out.println("VICTORY");
-						break;
+						//break;
 					}
 				}
 			} catch (Exception e) {
@@ -112,7 +111,7 @@ public class levelOne extends JFrame {
 		label.setVerticalAlignment(SwingConstants.TOP);
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		label.setFont(new Font("Gabriola", Font.PLAIN, 27));
-		label.setBounds(15, 302, 1016, 436);
+		label.setBounds(15, 302, 1016, 98);
 		contentPane.add(label);
 		
 		JLabel lblfarOutIn = new JLabel("<html>Far out in the uncharted backwaters of the unfashionable end of the Western spiral arm of he realm lies a small unregarded yellow castle. Its magnificent beams stand tall and proud, and nothing had ever laid seige upon it since the second ages. Now the terrifying BAD GUYS have returned, and the castle's defenses are old and disfunctional. You must fix the WEAPON! Use your knowledge of electricity to repair the activator button and launch the counterattack!</html>");
@@ -121,6 +120,10 @@ public class levelOne extends JFrame {
 		lblfarOutIn.setFont(new Font("Gabriola", Font.PLAIN, 30));
 		lblfarOutIn.setBounds(15, 16, 1016, 270);
 		contentPane.add(lblfarOutIn);
+		
+		board = new Board();
+		board.setBounds(115, 400, 800, 300);
+		contentPane.add(board);
 		
 		JButton btnRestart = new JButton("RESTART");
 		btnRestart.addActionListener(new ActionListener() {
