@@ -11,10 +11,7 @@ public class MainRunner {
 		askForArduinoPort();
 		main window = new main();
 		window.setVisible(true);
-		
 	}
-
-
 
 
 	private static void askForArduinoPort() {

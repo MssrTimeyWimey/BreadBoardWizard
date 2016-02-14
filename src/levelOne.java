@@ -3,6 +3,8 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
@@ -38,29 +40,39 @@ public class levelOne extends JFrame {
 	}
 
 	protected void checkCompletion() {
+		
+
+		MainRunner.arduinoPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING, 0, 0);
+		InputStream inputStream = MainRunner.arduinoPort.getInputStream();
+		Scanner data = new Scanner(inputStream);
+		
+		
 		//tell the arduino what program we're on: specifically, #1, "button"
 		PrintWriter output = new PrintWriter(MainRunner.arduinoPort.getOutputStream());
-		output.write("one");
+		output.write("one\n");
 		output.flush();
 		System.out.println("done writing");
 
 		//I am a motherfucking badass
+		
+		System.out.println(MainRunner.arduinoPort.isOpen());
+		System.out.println(MainRunner.arduinoPort.getBaudRate());
 
 		//wait for a button response from the user
-		MainRunner.arduinoPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
-		Scanner data = new Scanner(MainRunner.arduinoPort.getInputStream());
 		while(true) {
-			if(data.hasNext()){
-				int number = -1;
-				try{number = Integer.parseInt(data.next());}catch(Exception e){System.out.println("scanning error");};
-				System.out.println("current int val" + number);
-				if(number >= 1){
-					MainRunner.stagesUnlocked++;
-					button.setEnabled(true);
-					button.update(getGraphics());
-					System.out.println("VICTORY");
-					break;
+			try {
+				if (inputStream.available() > 0) {
+					int number = inputStream.read() - 48;
+					if(number > 0){
+						MainRunner.stagesUnlocked++;
+						button.setEnabled(true);
+						//button.update(getGraphics());
+						System.out.println("VICTORY");
+						break;
+					}
 				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			
 		}
@@ -78,7 +90,7 @@ public class levelOne extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		button = new JButton("(CREATIVE PROGRESS BUTTON");
+		button = new JButton("CREATIVE PROGRESS BUTTON");
 		if(MainRunner.stagesUnlocked < 2){
 			button.setEnabled(false);
 		}
