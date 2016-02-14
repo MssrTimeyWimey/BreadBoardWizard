@@ -63,6 +63,7 @@ public class levelOne extends JFrame {
 					int number = inputStream.read() - 48;
 					if(number > 0){
 						board.setAngle(board.getAngle()+1);
+						board.shoot();
 						board.paintComponent(board.getGraphics());
 						MainRunner.stagesUnlocked++;
 						button.setEnabled(true);
