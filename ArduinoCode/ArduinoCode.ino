@@ -1,17 +1,16 @@
 int buttonval = 0;
 int buttonstate = LOW;
-int lastButtonState = 0;
+int lastButtonState = -1;
 
 int potval = 0;
 int pot = 0;
-int lastPotval = 0;
+int lastPotval = -1;
 
 int soundReading = 0;
 int soundDifference = 0;
-int soundThreshold = 500;
+int soundThreshold = 600;
 int soundStatus = 0;
-
-String gameState = "";
+int lastSoundStatus = -1;
 
 void setup() {
   // put your setup code here, to run once:
@@ -26,13 +25,6 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  String temp = Serial.readString();
-  if (temp.length() > 0) {
-    gameState = temp;
-  }
-  
-  if (gameState == "one\n") {
     buttonval = digitalRead(13);
     if (buttonval == HIGH) {
       buttonstate = 1;
@@ -41,30 +33,34 @@ void loop() {
     }
 
     if (buttonstate != lastButtonState) {
+      Serial.print("b=");
       Serial.print(buttonstate);
+      Serial.print("\n");
       lastButtonState = buttonstate;
     }
-  }
 
-  if (gameState == "two") {
     pot = analogRead(A0);
     potval = map(pot,0,1023,0,180);
 
     if (potval != lastPotval) {
-      Serial.println(potval);
+      Serial.print("p=");
+      Serial.print(potval);
+      Serial.print("\n");
       lastPotval = potval;
-      delay(1);
+      delay(50);
     }
-  }
 
-  if (gameState == "three") {
     soundDifference = analogRead(A1) - soundReading;
     if(soundDifference>soundThreshold) {
       soundStatus = 1;
     } else {
       soundStatus = 0;
     }
-    Serial.println(soundStatus);
-    delay(100);
-  }
+    if (soundStatus != lastSoundStatus) {
+      lastSoundStatus = soundStatus;
+      Serial.print("s=");
+      Serial.print(soundStatus);
+      Serial.print("\n");
+      delay(50);
+    }
 }

@@ -16,6 +16,7 @@ public class Board extends JPanel implements Runnable {
 	private static final long serialVersionUID = 1L;
 	
 	private final int projectileSpeed = 5;
+	private final int waveSpeed = 10;
 	
 	double w;
 	double h;
@@ -35,9 +36,18 @@ public class Board extends JPanel implements Runnable {
 		}
 	}
 	
+	private class WaveInfo {
+		public double radius;
+		public WaveInfo(double radius) {
+			this.radius = radius;
+		}
+	}
+	
 	private LinkedList<ProjectileInfo> projectiles = new LinkedList<>();
+	private LinkedList<WaveInfo> waves = new LinkedList<>();
 	
 	public Board() {
+		super(true);
 	    w = 800;
 	    h = 300;
 	}
@@ -59,6 +69,10 @@ public class Board extends JPanel implements Runnable {
 	
 	public void shoot() {
 		projectiles.add(new ProjectileInfo((w/2), (h/2), getAngle()));
+	}
+	
+	public void scream() {
+		waves.add(new WaveInfo(0));
 	}
 
     private void drawDonut(Graphics g) {
@@ -90,17 +104,38 @@ public class Board extends JPanel implements Runnable {
             g2d.setColor(Color.red);
     		g2d.draw(at2.createTransformedShape(projShape));
         }
+        
+        synchronized (waves) {
+        	for (WaveInfo wave : waves) {
+        		Ellipse2D waveShape = new Ellipse2D.Double(w/2-wave.radius, h/2-wave.radius, wave.radius*2, wave.radius*2);
+        		g2d.setStroke(new BasicStroke(1));
+        		g2d.setColor(Color.blue);
+        		g2d.draw(waveShape);
+        	}
+        }
     }
     
     private void cycle() {
-    	Iterator<ProjectileInfo> i = projectiles.iterator();
-    	while(i.hasNext()) {
-    		ProjectileInfo projectile = i.next();
-    		projectile.x = projectile.x + projectileSpeed*Math.sin(projectile.angle*Math.PI/180);
-    		projectile.y = projectile.y - projectileSpeed*Math.cos(projectile.angle*Math.PI/180);
-    		if (projectile.y < -25) {
-    			i.remove();
-    		}
+    	{
+	    	Iterator<ProjectileInfo> i = projectiles.iterator();
+	    	while(i.hasNext()) {
+	    		ProjectileInfo projectile = i.next();
+	    		projectile.x = projectile.x + projectileSpeed*Math.sin(projectile.angle*Math.PI/180);
+	    		projectile.y = projectile.y - projectileSpeed*Math.cos(projectile.angle*Math.PI/180);
+	    		if (projectile.y < -25) {
+	    			i.remove();
+	    		}
+	    	}
+    	}
+        synchronized (waves) {
+	    	Iterator<WaveInfo> i = waves.iterator();
+	    	while(i.hasNext()) {
+	    		WaveInfo wave = i.next();
+	    		wave.radius = wave.radius + waveSpeed;
+	    		if (wave.radius > 500) {
+	    			i.remove();
+	    		}
+	    	}
     	}
     }
 

@@ -43,7 +43,7 @@ public class levelOne extends JFrame {
 	protected void checkCompletion() {
 		
 
-		MainRunner.arduinoPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING, 0, 0);
+		MainRunner.arduinoPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
 		InputStream inputStream = MainRunner.arduinoPort.getInputStream();
 		Scanner data = new Scanner(inputStream);
 		
@@ -59,16 +59,33 @@ public class levelOne extends JFrame {
 		//wait for a button response from the user
 		while(true) {
 			try {
-				if (inputStream.available() > 0) {
-					int number = inputStream.read() - 48;
-					if(number > 0){
-						board.setAngle(board.getAngle()+1);
-						board.shoot();
-						board.paintComponent(board.getGraphics());
+				if (data.hasNext()) {
+					String line = data.nextLine();
+					System.out.print("line = ");
+					System.out.println(line);
+					if (line.charAt(1) == '=') {
+						String varname = line.substring(0, 1);
+						int value = Integer.parseInt(line.substring(2));
+						if (varname.equals("b")) {
+							if (value == 1) {
+								board.shoot();
+							}
+						} else if (varname.equals("p")) {
+							board.setAngle(value-90);
+						} else if (varname.equals("s")) {
+							board.scream();
+						} else {
+							System.out.println("uhh problemm?");
+							System.out.println(line);
+						}
+						
 						MainRunner.stagesUnlocked++;
 						button.setEnabled(true);
 						System.out.println("VICTORY");
 						//break;
+					} else {
+						System.out.println("problem 2");
+						System.out.println(line);
 					}
 				}
 			} catch (Exception e) {
