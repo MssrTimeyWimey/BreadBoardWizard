@@ -63,7 +63,7 @@ public class levelTwo extends JFrame {
 		label.setBounds(15, 302, 1016, 436);
 		contentPane.add(label);
 		
-		JLabel lblCoolStory = new JLabel("<html>You have fixed the activator core of the WEAPON only to realize that the WEAPON'S power setting are stuck on low! The city needs your help! Take the power control stick and repair the broken circuits and save your city! The BAD GUYS are almost upon the castle walls, and without the weapon at full functional power, the walls will crumble!</CWRU>");
+		JLabel lblCoolStory = new JLabel("<html>Oh no! Misfortune strikes again, for although you have restored the activator core of the WEAPON, its POWER SETTINGS, weak from years of disuse, refuse to show their true vitality. The castle needs your aid! You must take the power control knob and repair the broken circuits with it, and quickly! The BAD GUYS are nearing the gate, and without the weapon at full power, the walls that have held for centuries will surely fall.</CWRU>");
 		lblCoolStory.setVerticalAlignment(SwingConstants.TOP);
 		lblCoolStory.setHorizontalAlignment(SwingConstants.CENTER);
 		lblCoolStory.setFont(new Font("Gabriola", Font.PLAIN, 30));

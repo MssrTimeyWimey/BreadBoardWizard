@@ -114,7 +114,7 @@ public class levelOne extends JFrame {
 		label.setBounds(15, 302, 1016, 98);
 		contentPane.add(label);
 		
-		JLabel lblfarOutIn = new JLabel("<html>Far out in the uncharted backwaters of the unfashionable end of the Western spiral arm of he realm lies a small unregarded yellow castle. Its magnificent beams stand tall and proud, and nothing had ever laid seige upon it since the second ages. Now the terrifying BAD GUYS have returned, and the castle's defenses are old and disfunctional. You must fix the WEAPON! Use your knowledge of electricity to repair the activator button and launch the counterattack!</html>");
+		JLabel lblfarOutIn = new JLabel("<html>Far out in the uncharted backwaters of the unfashionable end of the Western spiral arm of the realm lies a small unregarded yellow castle. Its magnificent buttresses stand tall and proud, its walls boasting six centuries of integrity. Now the BAD GUYS have descended once again from the north, and the castle's defenses have aged to a sorry state of dysfunction, turned soft from years of fighting only rain and wind. Now a new class of enemy stands at your doorstep, and you must restore the WEAPON's functionality. Use your knowledge of circuitry to repair the ACTIVATOR SWITCH and destroy the BAD GUYS knocking at your door!</html>");
 		lblfarOutIn.setVerticalAlignment(SwingConstants.TOP);
 		lblfarOutIn.setHorizontalAlignment(SwingConstants.CENTER);
 		lblfarOutIn.setFont(new Font("Gabriola", Font.PLAIN, 30));

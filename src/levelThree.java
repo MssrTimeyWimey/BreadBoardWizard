@@ -60,7 +60,7 @@ public class levelThree extends JFrame {
 		label.setBounds(15, 302, 1016, 436);
 		contentPane.add(label);
 		
-		JLabel lblCoolStory = new JLabel("<html>Now that you have a fully functional weapon, you are ready to unleash hell on the BAD GUYS. Let that war cry flow! Repair the PA system in the castle and rally your soldiers. You must inspire your comrades, and nothing will inspire your brothers more than a fierce and shrill shriek through the loud speakers. Let those vocal cords vibrate!</html>");
+		JLabel lblCoolStory = new JLabel("<html>Now that the WEAPON is fully functional, you are ready to take out the BAD GUYS. Inspire your comrades and lead them in the fight against the evil beyond the wall! By repairing the microphone for the castle's PA system you can rally your fellows, providing them with the bravery that exemplifies a legendary warrior. Nothing can inspire your brothers more than the amplified sound of a war cry. Let those vocal cords vibrate freely and fiercely!</html>");
 		lblCoolStory.setVerticalAlignment(SwingConstants.TOP);
 		lblCoolStory.setHorizontalAlignment(SwingConstants.CENTER);
 		lblCoolStory.setFont(new Font("Gabriola", Font.PLAIN, 30));
